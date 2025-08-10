@@ -2,56 +2,45 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = {
-  config: {
-    name: "file",
-    aliases: ["files"],
-    version: "1.1",
-    author: "NIrob",
-    countDown: 5,
-    role: 0,
-    shortDescription: "Send bot script file",
-    longDescription: "Send a specified bot file as an attachment",
-    category: "𝗢𝗪𝗡𝗘𝗥",
-    guide: "{pn} filename (without .js)"
-  },
+	config: {
+		name: "file",
+		version: "1.0",
+		author: "Mah MUD彡",
+		countDown: 5,
+		role: 0,
+		shortDescription: "Send bot script",
+		longDescription: "Send bot specified file",
+		category: "admin",
+		guide: "{pn} <file name>. Example: {pn} filename"
+	},
 
-  onStart: async function ({ message, args, api, event }) {
-    const permission = ["100069254151118"];
-    if (!permission.includes(event.senderID)) {
-      return api.sendMessage(
-        "You don't have permission to use this command. 🐤",
-        event.threadID,
-        event.messageID
-      );
-    }
+	onStart: async function ({ message, args, api, event }) {
+		// Allowed user IDs
+		const permission = ["100069254151118"];
+		if (!permission.includes(event.senderID)) {
+			return api.sendMessage("❌ | 𝐒𝐨𝐫𝐫𝐲 𝐛𝐚𝐛𝐲, 𝐨𝐧𝐥𝐲 𝐌𝐚𝐡𝐌𝐔𝐃 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐜𝐨𝐦𝐦𝐚𝐧𝐝", event.threadID, event.messageID);
+		}
 
-    const fileName = args[0];
-    if (!fileName) {
-      return api.sendMessage(
-        "Please provide a file name. Example: file example",
-        event.threadID,
-        event.messageID
-      );
-    }
+		// Check for file name argument
+		const fileName = args[0];
+		if (!fileName) {
+			return api.sendMessage("⚠ | Please provide a file name. Example: file test", event.threadID, event.messageID);
+		}
 
-    const filePath = path.join(__dirname, `${fileName}.js`);
+		// Build file path
+		const filePath = path.join(__dirname, `${fileName}.js`);
 
-    if (!fs.existsSync(filePath)) {
-      return api.sendMessage(
-        `File not found: ${fileName}.js`,
-        event.threadID,
-        event.messageID
-      );
-    }
+		// Check if file exists
+		if (!fs.existsSync(filePath)) {
+			return api.sendMessage(`❌ | File not found: ${fileName}.js`, event.threadID, event.messageID);
+		}
 
-    // Send the file as an attachment
-    api.sendMessage(
-      {
-        body: `Here is the file: ${fileName}.js`,
-        attachment: fs.createReadStream(filePath)
-      },
-      event.threadID,
-      event.messageID
-    );
-  }
+		// Read and send file content
+		try {
+			const fileContent = fs.readFileSync(filePath, 'utf8');
+			api.sendMessage({ body: fileContent }, event.threadID, event.messageID);
+		} catch (err) {
+			api.sendMessage(`❌ | Error reading file: ${err.message}`, event.threadID, event.messageID);
+		}
+	}
 };
