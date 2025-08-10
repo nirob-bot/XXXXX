@@ -36,12 +36,16 @@ module.exports = {
     // 📦 Short Version Message (default)
     const infoMessage = `👤 𝗢𝗪𝗡𝗘𝗥 𝗜𝗡𝗙𝗢
 ━━━━━━━━━━━━━━━
-• 𝗡𝗔𝗠𝗘: ARIJIT 🇮🇳
-• 𝗙𝗕: fb.com/share/1D8LnYLkLt/
-• 𝗜𝗚: itz_arijit_777
+• 𝗡𝗔𝗠𝗘: A R I J I T 
+• 𝗡𝗜𝗖𝗞𝗡𝗔𝗠𝗘 : Aru
+• 𝗔𝗗𝗗𝗥𝗘𝗦𝗦: KOLKATA 🇮🇳
+• 𝗚𝗘𝗡𝗗𝗘𝗥: MALE  
+• 𝗔𝗚𝗘: 20  
+• 𝗥𝗘𝗟𝗔𝗧𝗜𝗢𝗡𝗦𝗛𝗜𝗣: SINGLE   
+• 𝗙𝗕 🆔: Nefarious Arijit II   
+• 𝐈𝐍𝐒𝐓𝐀 🆔: itz__arijit__777
 • 📧: arijitnaha2@gmail.com
-
-🤖 𝗕𝗢𝗧: ALYA BOT
+🤖 𝗕𝗢𝗧: ALYA
 🏠 GC: ${threadName}
 🕒 ${dateStr} | ${timeStr}
 ━━━━━━━━━━━━━━━`;
