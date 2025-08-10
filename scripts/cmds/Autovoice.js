@@ -41,7 +41,7 @@ module.exports = {
 				"😮": { text: "ওয়াও! 😮", file: "ragkoro.mp3" },
 				"🤐": { text: "চুপ করো 😶", file: "sabdan.mp3" },
 				"😈": { text: "ডাক কিসের? 😈", file: "dakoknogo.mp3" },
-				"👁": { text: "কি দেখছো? 👀", file: "jhal.mp3" },
+				"👁️": { text: "কি দেখছো? 👀", file: "jhal.mp3" },
 				"🤭": { text: "সরম পাচ্ছো? 🤭", file: "sorom.mp3" },
 				"😵": { text: "ভেতরে যা হইসে! 😵", file: "datcokcok.mp3" },
 				"🥴": { text: "আমি কি ভুত? 🥴", file: "amikivut.mp3" },
@@ -55,11 +55,11 @@ module.exports = {
 
 				if (fs.existsSync(filePath)) {
 					return message.reply({
-						body: 「 ${audioResponses[word].text} 」,
+						body: `「 ${audioResponses[word].text} 」`,
 						attachment: fs.createReadStream(filePath),
 					});
 				} else {
-					return message.reply(Error: File "${audioResponses[word].file}" not found!);
+					return message.reply(`Error: File "${audioResponses[word].file}" not found!`);
 				}
 			}
 		}
