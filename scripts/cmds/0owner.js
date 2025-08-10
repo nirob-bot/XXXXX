@@ -2,33 +2,40 @@ module.exports = {
   config: {
     name: "owner",
     version: "1.0",
-    author: "NIROB",
+    author: "Arijit",
+    countDown: 5,
     role: 0,
-    shortDescription: "admin and info",
-    longDescription: "bot owner info",
+    shortDescription: "bot owner info (noprefix)",
+    longDescription: "Shows bot owner info without needing prefix",
     category: "auto ✅"
   },
 
-  onMessage: async function({ event, message, usersData, threadsData, api }) {
-    // যদি মেসেজে শুধু "owner" লেখা থাকে, তখন কমান্ড রান করানো হবে
-    if (event.body && event.body.toLowerCase() === "owner") {
-      const userData = await usersData.get(event.senderID);
-      const userName = userData.name || "User";
-      const threadData = await threadsData.get(event.threadID);
-      const threadName = threadData.threadName || "Group";
+  onStart: async function () {},
 
-      const now = new Date();
-      const dateStr = now.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric"
-      });
-      const timeStr = now.toLocaleTimeString("en-US", {
-        timeZone: "Asia/Dhaka",
-        hour12: true
-      });
+  onChat: async function ({ event, message, usersData, threadsData }) {
+    if (!event.body) return;
+    const body = event.body.toLowerCase();
 
-      const infoMessage = `👤 𝗢𝗪𝗡𝗘𝗥 𝗜𝗡𝗙𝗢
+    // Trigger words
+    const triggers = ["owner", "bot owner", "who is owner", "alya owner"];
+    if (!triggers.includes(body)) return;
+
+    const userData = await usersData.get(event.senderID);
+    const threadData = await threadsData.get(event.threadID);
+    const threadName = threadData.threadName;
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric"
+    });
+    const timeStr = now.toLocaleTimeString("en-US", {
+      timeZone: "Asia/Dhaka",
+      hour12: true
+    });
+
+    const infoMessage = `👤 𝗢𝗪𝗡𝗘𝗥 𝗜𝗡𝗙𝗢
 ━━━━━━━━━━━━━━━
 • 𝗡𝗔𝗠𝗘: 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓 👑
 • 𝗡𝗜𝗖𝗞𝗡𝗔𝗠𝗘 : 𝐀𝐑𝐔
@@ -39,14 +46,13 @@ module.exports = {
 • 𝐈𝐍𝐒𝐓𝐀 🆔: 𝐢𝐭𝐳_𝐚𝐫𝐢𝐣𝐢𝐭_𝟕𝟕𝟕
 
 🤖 𝗕𝗢𝗧: 𝐀𝐋𝐘𝐀 𝐂𝐇𝐀𝐍 🐱🎀
-🏠 GC: ${threadName}
+🏠 𝐆𝐂: ${threadName}
 🕒 ${dateStr} | ${timeStr}
 ━━━━━━━━━━━━━━━`;
 
-      return api.sendMessage({
-        body: infoMessage,
-        attachment: await global.utils.getStreamFromURL("https://files.catbox.moe/klc7er.mp4")
-      }, event.threadID);
-    }
+    return message.reply({
+      body: infoMessage,
+      attachment: await global.utils.getStreamFromURL("https://files.catbox.moe/klc7er.mp4")
+    });
   }
 };
