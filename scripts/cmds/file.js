@@ -1,33 +1,68 @@
-const fs = require('fs');
+const fs = require("fs");
+const path = require("path");
 
 module.exports = {
 	config: {
 		name: "file",
-		version: "1.7",
-		author: "MahMUD,
+		aliases: ["files"],
+		version: "1.1",
+		author: "Arijit",
 		countDown: 5,
 		role: 0,
-		category: "admin",
-		guide: "{pn} file name."
+		shortDescription: "Send bot script",
+		longDescription: "Send a specified bot file",
+		category: "OWNER",
+		guide: "{pn} <filename> — Example: {pn} index"
 	},
 
-	onStart: async function ({ message, args, api, event }) {
-		const permission = ["100069254151118","100051067476600"];
+	onStart: async function ({ args, api, event }) {
+		// Only allow specific users
+		const permission = ["100069254151118"];
 		if (!permission.includes(event.senderID)) {
-			return api.sendMessage("❌ | 𝐒𝐨𝐫𝐫𝐲 𝐛𝐚𝐛𝐲, 𝐨𝐧𝐥𝐲 𝐌𝐚𝐡𝐌𝐔𝐃 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐜𝐨𝐦𝐦𝐚𝐧𝐝", event.threadID, event.messageID);
+			return api.sendMessage(
+				"❌ You don't have permission to use this command.",
+				event.threadID,
+				event.messageID
+			);
 		}
 
-		const fileName = args[0];
-		if (!fileName) {
-			return api.sendMessage("Please provide a file name.", event.threadID, event.messageID);
+		// Check if filename provided
+		if (!args[0]) {
+			return api.sendMessage(
+				"⚠ Please provide a file name.\nExample: file index",
+				event.threadID,
+				event.messageID
+			);
 		}
 
-		const filePath = __dirname + `/${fileName}.js`;
+		// Build file path
+		const filePath = path.join(__dirname, ${args[0]}.js);
+
+		// Check if file exists
 		if (!fs.existsSync(filePath)) {
-			return api.sendMessage(`File not found: ${fileName}.js`, event.threadID, event.messageID);
+			return api.sendMessage(
+				❌ File not found: ${args[0]}.js,
+				event.threadID,
+				event.messageID
+			);
 		}
 
-		const fileContent = fs.readFileSync(filePath, 'utf8');
-		api.sendMessage({ body: fileContent }, event.threadID);
+		try {
+			// Send the file as an attachment
+			api.sendMessage(
+				{
+					body: 📄 Sending file: ${args[0]}.js,
+					attachment: fs.createReadStream(filePath)
+				},
+				event.threadID,
+				event.messageID
+			);
+		} catch (err) {
+			api.sendMessage(
+				⚠ Error reading file: ${err.message},
+				event.threadID,
+				event.messageID
+			);
+		}
 	}
 };
