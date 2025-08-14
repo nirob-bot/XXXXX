@@ -1,4 +1,3 @@
-const axios = require("axios");
 const fs = require("fs");
 const utils = global.utils;
 
@@ -21,7 +20,7 @@ module.exports = {
             confirmThisThread: "Please react to this message to confirm changing the prefix in your chat",
             successGlobal: "Changed system bot prefix to: %1",
             successThisThread: "Changed prefix in your chat to: %1",
-            myPrefix: "\n\n➢ 🌎 𝐆𝐥𝐨𝐛𝐚𝐥 𝐩𝐫𝐞𝐟𝐢𝐱: %1 \n➢ 📚 𝐘𝐨𝐮𝐫 𝐠𝐫𝐨𝐮𝐩 𝐩𝐫𝐞𝐟𝐢𝐱: %2\n\n╭➢ 𝐀𝐝𝐦𝐢𝐧 👑\n╰➢ 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓⚡\n\n╭➢ 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤 ⓕ\n╰➢ https://fb.com/arijit016\n\n"
+            myPrefix: "\n\n━━━━〔 𝐌𝐫.𝐁𝐨𝐭 🤖 〕━━━━ \n\n 🖥 𝐒𝐲𝐬𝐭𝐞𝐦 𝐩𝐫𝐞𝐟𝐢𝐱: [ %1 ] \n 🌐 𝐘𝐨𝐮𝐫 𝐠𝐫𝐨𝐮𝐩 𝐩𝐫𝐞𝐟𝐢𝐱: [ %2 ]\n\n╭➢ 𝐀𝐝𝐦𝐢𝐧 👑\n╰➢ 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓⚡\n\n╭➢ 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤 ⓕ\n╰➢ [ https://fb.com/arijit016 ]\n\n"
         }
     },
 
@@ -62,18 +61,9 @@ module.exports = {
 
     onChat: async function ({ event, message, getLang }) {
         if (event.body && event.body.toLowerCase() === "prefix") {
-            try {
-                const videoUrl = "https://files.catbox.moe/zubdm0.mp4";
-
-                return message.reply({
-                    body: getLang("myPrefix", global.GoatBot.config.prefix, utils.getPrefix(event.threadID)),
-                    attachment: await global.utils.getStreamFromURL(videoUrl)
-                });
-
-            } catch (error) {
-                console.error("Error fetching video:", error);
-                return message.reply("An error occurred while fetching the video.");
-            }
+            return message.reply(
+                getLang("myPrefix", global.GoatBot.config.prefix, utils.getPrefix(event.threadID))
+            );
         }
     },
 
