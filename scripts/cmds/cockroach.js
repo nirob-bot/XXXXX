@@ -6,8 +6,8 @@ const Jimp = require("jimp");
 module.exports = {
   config: {
     name: "cockroach",
-    version: "1.0.0",
-    author: "Arafat",
+    version: "1.1.0",
+    author: "Arafat & Arijit",
     countDown: 5,
     role: 0,
     shortDescription: "Expose someone as a cockroach!",
@@ -34,55 +34,56 @@ module.exports = {
 
     const baseFolder = path.join(__dirname, "Arafat_Temp");
     const bgPath = path.join(baseFolder, "cockroach.png");
-    const avatarPath = path.join(baseFolder, avatar_${targetID}.png);
-    const outputPath = path.join(baseFolder, cockroach_result_${targetID}.png);
+    const avatarPath = path.join(baseFolder, `avatar_${targetID}.png`);
+    const outputPath = path.join(baseFolder, `cockroach_result_${targetID}.png`);
 
     try {
       if (!fs.existsSync(baseFolder)) fs.ensureDirSync(baseFolder);
 
-      // Download cockroach image if missing
+      // Download cockroach template if missing
       if (!fs.existsSync(bgPath)) {
         const imgUrl = "https://raw.githubusercontent.com/Arafat-Core/Arafat-Temp/main/cockroach.png";
         const res = await axios.get(imgUrl, { responseType: "arraybuffer" });
         await fs.writeFile(bgPath, res.data);
       }
 
-      // --- Facebook avatar fetching using robust method (from pair command) ---
+      // Fetch user avatar
       let avatarBuffer;
       try {
         const userInfo = await api.getUserInfo(targetID);
-        const avatarUrl = userInfo[targetID]?.profile_pic;
+        const avatarUrl = userInfo[targetID]?.profileUrl || userInfo[targetID]?.profile_pic;
         if (!avatarUrl) throw new Error("No avatar URL found");
 
-        avatarBuffer = (
-          await axios.get(avatarUrl, { responseType: "arraybuffer" })
-        ).data;
+        avatarBuffer = (await axios.get(avatarUrl, { responseType: "arraybuffer" })).data;
         await fs.writeFile(avatarPath, avatarBuffer);
       } catch (err) {
         console.error("Avatar fetch failed, using default:", err);
-        // fallback default avatar
-        avatarBuffer = fs.readFileSync(path.join(__dirname, "default_avatar.png"));
+        const defaultAvatarPath = path.join(__dirname, "default_avatar.png");
+        if (!fs.existsSync(defaultAvatarPath)) {
+          throw new Error("Default avatar missing!");
+        }
+        avatarBuffer = fs.readFileSync(defaultAvatarPath);
         await fs.writeFile(avatarPath, avatarBuffer);
       }
 
-      // Process avatar
+      // Process avatar image
       const avatarImg = await Jimp.read(avatarPath);
       avatarImg.circle();
       await avatarImg.writeAsync(avatarPath);
 
       const bg = await Jimp.read(bgPath);
-      bg.resize(600, 800); // Keep it consistent
+      bg.resize(600, 800);
 
       const avatarCircle = await Jimp.read(avatarPath);
-      avatarCircle.resize(100, 100); // Adjust size if needed
+      avatarCircle.resize(100, 100);
 
-      // Adjust placement to align with cockroach head
+      // Positioning face on cockroach's head
       const xCenter = (bg.getWidth() - avatarCircle.getWidth()) / 2;
-      const yTop = 290; // Updated value to place face on head
+      const yTop = 290;
 
       bg.composite(avatarCircle, xCenter, yTop);
 
-      const finalBuffer = await bg.getBufferAsync("image/png");
+      const finalBuffer = await bg.getBufferAsync(Jimp.MIME_PNG);
       await fs.writeFile(outputPath, finalBuffer);
 
       const userInfo = await api.getUserInfo(targetID);
@@ -90,13 +91,13 @@ module.exports = {
 
       await message.reply(
         {
-          body: 🪳\n${tagName} হলো একটা আসল তেলাপোকা!,
+          body: `🪳\n${tagName} হলো একটা আসল তেলাপোকা!`,
           mentions: [{ tag: tagName, id: targetID }],
           attachment: fs.createReadStream(outputPath),
         },
         () => {
-          try { fs.unlinkSync(avatarPath); } catch (e) {}
-          try { fs.unlinkSync(outputPath); } catch (e) {}
+          try { fs.unlinkSync(avatarPath); } catch {}
+          try { fs.unlinkSync(outputPath); } catch {}
         }
       );
 
