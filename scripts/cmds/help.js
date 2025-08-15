@@ -49,11 +49,12 @@ module.exports = {
               const cmd = require(cmdPath);
               const info = `
 ╭─❏ 📜 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 𝐈𝐧𝐟𝐨 🔖 ─❏
+│ 👑 𝐀𝐝𝐦𝐢𝐧: 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓⚡
 │ 🤖 𝐁𝐨𝐭: 𝐀𝐥𝐲𝐚 𝐜𝐡𝐚𝐧🐱🎀
 │ 📌 𝐍𝐚𝐦𝐞: ${cmd.config.name.toUpperCase()}
 │ 📛 𝐀𝐥𝐢𝐚𝐬𝐞𝐬: ${cmd.config.aliases?.length ? cmd.config.aliases.join(", ") : "None"}
 │ 📄 𝐃𝐞𝐬𝐜𝐫𝐢𝐩𝐭𝐢𝐨𝐧: ${typeof cmd.config.shortDescription === "string" ? cmd.config.shortDescription : (cmd.config.shortDescription?.en || "No description")}
-│ 👑 𝐀𝐝𝐦𝐢𝐧: ${cmd.config.author || "Unknown"}
+│ ✍🏼 𝐀𝐮𝐭𝐡𝐨𝐫 ${cmd.config.author || "Unknown"}
 │ 📚 𝐆𝐮𝐢𝐝𝐞: ${cmd.config.guide?.en || "Not available"}
 │━━━━━━━━━━━━━━━━━━
 │ ⭐ 𝐕𝐞𝐫𝐬𝐢𝐨𝐧: ${cmd.config.version || "1.0"}
@@ -72,7 +73,7 @@ module.exports = {
     }
 
     // Generate full category list
-    let output = "📜 𝗕𝗢𝗧 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗟𝗜𝗦𝗧\n";
+    let output = "📜 𝗕𝗢𝗧 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗟𝗜𝗦𝗧 🔖\n";
     for (const category in categories) {
       output += `\n╔═══ ✦ ${category.toUpperCase()} ✦ ═══╗\n`;
       output += `✧ ${categories[category].join("   ✧ ")}\n`;
@@ -81,8 +82,8 @@ module.exports = {
 
     output += `\n📌 Total Commands: ${Object.values(categories).reduce((a, b) => a + b.length, 0)}`;
     output += `\n📌 Usage: ${prefix}help <command_name>`;
-    output += `\n👑 Admin: 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓`;
-    output += `\n🌐 Facebook: https://fb.com/arijit016`;
+    output += `\n👑 Admin: 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓⚡`;
+    output += `\n🌐 Facebook: [ https://fb.com/arijit016 ]`;
 
     message.reply(output);
   }
