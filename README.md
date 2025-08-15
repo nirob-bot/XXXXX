@@ -40,7 +40,7 @@ If you find any issues, please report them!
 				<br>
 	𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤: <a href="https://fb.com/arijit016" style="color: black;">𝐀 𝐑 𝐈 𝐉 𝐈 𝐓</a></h3></div>
 
-<img align="center" src="https://i.imgur.com/UM3ekFf.jpeg"/>
+<img align="center" src="https://i.imgur.com/pVS6nuV.jpeg"/>
 
 
 🔹𝐀 𝐑 𝐈 𝐉 𝐈 𝐓⚡
