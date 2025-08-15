@@ -3,7 +3,7 @@ src="https://i.imgur.com/1SwrtZ1.jpeg" alt="banner">
 
 <h1 align="center">
   <img src="https://i.imgur.com/EPgCOnR.jpeg" width="22px" alt="icon">
-  𝐀𝐥𝐲𝐚 𝐂𝐡𝐚𝐧 🐱🎀 - 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 𝐒𝐭𝐨𝐫𝐞 𝐅𝐨𝐫 𝐌𝐞𝐬𝐬𝐞𝐧𝐠𝐞𝐫 𝐁𝐨𝐭
+  𝐀𝐥𝐲𝐚 𝐂𝐡𝐚𝐧 🐱🎀 - 𝐌𝐞𝐬𝐬𝐞𝐧𝐠𝐞𝐫 𝐁𝐨𝐭
 </h1>
 
 <p align="center">
