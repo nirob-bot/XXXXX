@@ -18,7 +18,7 @@ module.exports = {
     const permission = ["100069254151118"];
     if (!permission.includes(event.senderID)) {
       return api.sendMessage(
-        "❌ | 𝐒𝐨𝐫𝐫𝐲 𝐛𝐚𝐛𝐲, 𝐨𝐧𝐥𝐲 𝗺𝘆 𝗹𝗼𝗿𝗱 𝗔𝗿𝗶𝗷𝗶𝘁 𝗰𝗮𝗻 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐜𝐨𝐦𝐦𝐚𝐧𝐝",
+        "❌ | 𝐬𝐨𝐫𝐫𝐲 𝐛𝐚𝐛𝐲, 𝐨𝐧𝐥𝐲 𝐦𝐲 𝐥𝐨𝐫𝐝 𝐀𝐫𝐢𝐣𝐢𝐭 𝐜𝐚𝐧 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐜𝐨𝐦𝐦𝐚𝐧𝐝",
         event.threadID,
         event.messageID
       );
