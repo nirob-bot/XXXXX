@@ -1,113 +1,118 @@
-const { getPrefix } = global.utils;
-const { commands, aliases } = global.GoatBot;
+const fs = require("fs");
+const path = require("path");
 
 module.exports = {
   config: {
     name: "help",
-    version: "1.17",
-    author: "Ktkhang | modified MahMUD",
+    aliases: ["menu", "cmds"],
+    version: "3.0",
+    author: "Arijit",
     countDown: 5,
     role: 0,
-    shortDescription: {
-      en: "View command usage and list all commands directly",
-    },
-    longDescription: {
-      en: "View command usage and list all commands directly",
-    },
-    category: "info",
-    guide: {
-      en: "help cmdName",
-    },
-    priority: 1,
+    shortDescription: { en: "Show all commands" },
+    longDescription: { en: "Displays all bot commands sorted by category, auto-updates when new commands are added" },
+    category: "system",
+    guide: { en: "{p}help [command name]" }
   },
 
-  onStart: async function ({ message, args, event, threadsData, role }) {
-    const { threadID } = event;
-    const threadData = await threadsData.get(threadID);
-    const prefix = getPrefix(threadID);
+  onStart: async function ({ message, args, prefix }) {
+    const commandsPath = path.join(__dirname, ".."); // Parent folder of commands
+    const categories = {};
 
-    if (args.length === 0) {
-      const categories = {};
-      let msg = "";
-
-      msg += ``; 
-
-      for (const [name, value] of commands) {
-        if (value.config.role > 1 && role < value.config.role) continue;
-
-        const category = value.config.category || "Uncategorized";
-        categories[category] = categories[category] || { commands: [] };
-        categories[category].commands.push(name);
-      }
-
-      Object.keys(categories).forEach((category) => {
-        if (category !== "info") {
-          msg += `\n╭─────⭓ ${category.toUpperCase()}`;
-
-          const names = categories[category].commands.sort();
-          for (let i = 0; i < names.length; i += 3) {
-            const cmds = names.slice(i, i + 2).map((item) => `✧${item}`);
-            msg += `\n│${cmds.join(" ".repeat(Math.max(1, 5 - cmds.join("").length)))}`;
+    // Scan all command folders
+    fs.readdirSync(commandsPath).forEach(folder => {
+      const folderPath = path.join(commandsPath, folder);
+      if (fs.lstatSync(folderPath).isDirectory()) {
+        const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"));
+        for (const file of commandFiles) {
+          try {
+            const cmd = require(path.join(folderPath, file));
+            if (cmd.config && cmd.config.name) {
+              const category = cmd.config.category || "Uncategorized";
+              if (!categories[category]) categories[category] = [];
+              categories[category].push(cmd.config.name);
+            }
+          } catch (e) {
+            console.error(`Error loading command ${file}:`, e);
           }
-
-          msg += `\n╰────────────⭓\n`;
         }
-      });
-
-      const totalCommands = commands.size;
-      msg += `\n\n⭔Bot has ${totalCommands} commands\n⭔Type ${prefix}𝐡𝐞𝐥𝐩 <𝚌𝚘𝚖𝚖𝚊𝚗𝚍 𝚗𝚊𝚖𝚎> to learn Usage.\n`;
-      msg += ``;
-      msg += `\n╭─✦ADMIN: 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓 👑\n├‣ FACEBOOK\n╰➢:[ https://fb.com/arijit016 ]`; // customize this section if needed
-
-      try {
-        const hh = await message.reply({ body: msg });
-
-        // Automatically unsend the message after 30 seconds
-        setTimeout(() => {
-          message.unsend(hh.messageID);
-        }, 80000);
-
-      } catch (error) {
-        console.error("Error sending help message:", error);
       }
+    });
 
-    } else {
-      const commandName = args[0].toLowerCase();
-      const command = commands.get(commandName) || commands.get(aliases.get(commandName));
-
-      if (!command) {
-        await message.reply(`Command "${commandName}" not found.`);
-      } else {
-        const configCommand = command.config;
-        const roleText = roleTextToString(configCommand.role);
-        const author = configCommand.author || "Unknown";
-
-        const longDescription = configCommand.longDescription ? configCommand.longDescription.en || "No description" : "No description";
-
-        const guideBody = configCommand.guide?.en || "No guide available.";
-        const usage = guideBody.replace(/{he}/g, prefix).replace(/{lp}/g, configCommand.name);
-
-        const response = `╭─────────⭓\n│ 🎀 NAME: ${configCommand.name}\n│ 📃 Aliases: ${configCommand.aliases ? configCommand.aliases.join(", ") : "Do not have"}\n├──‣ INFO\n│ 📝 𝗗𝗲𝘀𝗰𝗿𝗶𝗽𝘁𝗶𝗼𝗻: ${longDescription}\n│ 👑 𝗔𝗱𝗺𝗶𝗻: 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓⚡\n│ 📚 𝗚𝘂𝗶𝗱𝗲: ${usage}\n├──‣ Usage\n│ ⭐ 𝗩𝗲𝗿𝘀𝗶𝗼𝗻: ${configCommand.version || "1.0"}\n│ ♻️ 𝗥𝗼𝗹𝗲: ${roleText}\n╰────────────⭓`;
-
-        const helpMessage = await message.reply(response);
-
-          setTimeout(() => {
-          message.unsend(helpMessage.messageID);
-        }, 80000);
+    // If user requested details about a specific command
+    if (args[0]) {
+      const searchName = args[0].toLowerCase();
+      for (const category in categories) {
+        for (const cmdName of categories[category]) {
+          if (cmdName.toLowerCase() === searchName) {
+            const cmdPath = findCommandPath(commandsPath, cmdName);
+            if (cmdPath) {
+              const cmd = require(cmdPath);
+              const info = `
+╭─❏ 📜 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 𝐈𝐧𝐟𝐨 🔖 ─❏
+│ 🤖 𝐁𝐨𝐭: 𝐀𝐥𝐲𝐚 𝐜𝐡𝐚𝐧🐱🎀
+│ 📌 𝐍𝐚𝐦𝐞: ${cmd.config.name.toUpperCase()}
+│ 📛 𝐀𝐥𝐢𝐚𝐬𝐞𝐬: ${cmd.config.aliases?.length ? cmd.config.aliases.join(", ") : "None"}
+│ 📄 𝐃𝐞𝐬𝐜𝐫𝐢𝐩𝐭𝐢𝐨𝐧: ${typeof cmd.config.shortDescription === "string" ? cmd.config.shortDescription : (cmd.config.shortDescription?.en || "No description")}
+│ 👑 𝐀𝐝𝐦𝐢𝐧: ${cmd.config.author || "Unknown"}
+│ 📚 𝐆𝐮𝐢𝐝𝐞: ${cmd.config.guide?.en || "Not available"}
+│━━━━━━━━━━━━━━━━━━
+│ ⭐ 𝐕𝐞𝐫𝐬𝐢𝐨𝐧: ${cmd.config.version || "1.0"}
+│ ♻ 𝐑𝐨𝐥𝐞: ${roleText(cmd.config.role)}
+│ 🛡 𝐏𝐞𝐫𝐦𝐢𝐬𝐬𝐢𝐨𝐧: ${cmd.config.role === 0 ? "All Users" : cmd.config.role === 1 ? "Group Admins" : "Bot Admins"}
+│ 📂 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐲: ${cmd.config.category || "Uncategorized"}
+│ ⏳ 𝐂𝐨𝐨𝐥𝐝𝐨𝐰𝐧: ${cmd.config.countDown || 0}s
+╰────────────────────❏
+              `.trim();
+              return message.reply(info);
+            }
+          }
+        }
       }
+      return message.reply(`❌ Command "${args[0]}" not found.`);
     }
-  },
+
+    // Generate full category list
+    let output = "📜 𝗕𝗢𝗧 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗟𝗜𝗦𝗧\n";
+    for (const category in categories) {
+      output += `\n╔═══ ✦ ${category.toUpperCase()} ✦ ═══╗\n`;
+      output += `✧ ${categories[category].join("   ✧ ")}\n`;
+      output += "╚═════════════════╝\n";
+    }
+
+    output += `\n📌 Total Commands: ${Object.values(categories).reduce((a, b) => a + b.length, 0)}`;
+    output += `\n📌 Usage: ${prefix}help <command_name>`;
+    output += `\n👑 Admin: 𝐀 𝐑 𝐈 𝐉 𝐈 𝐓`;
+    output += `\n🌐 Facebook: https://fb.com/arijit016`;
+
+    message.reply(output);
+  }
 };
 
-function roleTextToString(roleText) {
-  switch (roleText) {
-    case 0:
-      return "0 (All users)";
-    case 1:
-      return "1 (Group administrators)";
-    case 2:
-      return "2 (Admin bot)";
-    default:
-      return "Unknown role";
+// Helper: find exact command file
+function findCommandPath(baseDir, commandName) {
+  const folders = fs.readdirSync(baseDir);
+  for (const folder of folders) {
+    const folderPath = path.join(baseDir, folder);
+    if (fs.lstatSync(folderPath).isDirectory()) {
+      const files = fs.readdirSync(folderPath).filter(f => f.endsWith(".js"));
+      for (const file of files) {
+        const cmd = require(path.join(folderPath, file));
+        if (cmd.config && cmd.config.name && cmd.config.name.toLowerCase() === commandName.toLowerCase()) {
+          return path.join(folderPath, file);
+        }
+      }
+    }
   }
-	      }
+  return null;
+}
+
+// Helper: Convert role number to text
+function roleText(role) {
+  switch (role) {
+    case 0: return "0 (All Users)";
+    case 1: return "1 (Group Admins)";
+    case 2: return "2 (Bot Admins)";
+    default: return "Unknown role";
+  }
+}
