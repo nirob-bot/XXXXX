@@ -4,7 +4,6 @@ const path = require("path");
 module.exports = {
   config: {
     name: "help",
-    aliases: ["menu", "cmds"],
     version: "3.0",
     author: "Arijit",
     countDown: 5,
